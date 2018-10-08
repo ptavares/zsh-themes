@@ -109,7 +109,7 @@ prompt_diskusage() {
 }
 
 prompt_time() {
-   prompt_segment black default "`date +%H:%M:%S`"
+   prompt_segment white black "`date +%H:%M:%S`"
 }
 
 # Context: user@hostname (who am I and where am I)
