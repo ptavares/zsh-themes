@@ -74,6 +74,19 @@ prompt_segment() {
   [[ -n $3 ]] && echo -n $3
 }
 
+prompt_segment_right() {
+  local bg fg
+  [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
+  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
+  if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
+    echo -n " %{$reset_color%}%{$bg%F{$CURRENT_BG}%}%{$fg%} "
+  else
+    echo -n "%{$reset_color%}%{$bg%}%{$fg%} "
+  fi
+  CURRENT_BG=$1
+  [[ -n $3 ]] && echo -n $3
+}
+
 # Begin a segment in bold
 # Takes two arguments, background and foreground. Both can be omitted,
 # rendering default background/foreground.
@@ -225,7 +238,7 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_bold_segment blue default '%~'
+  prompt_bold_segment blue default "%$(( $COLUMNS - 100 ))<...<%~%<<"
 }
 
 # Virtualenv: current working virtualenv
@@ -263,6 +276,11 @@ build_prompt() {
   prompt_bzr
   prompt_hg
   prompt_end
+}
+
+build_prompt_right() {
+  prompt_segment_right black default "du:`df -P . | sed -n '2p' | awk '{ print $5 }'`%"
+  prompt_segment_right blue default "du:`df -P . | sed -n '2p' | awk '{ print $5 }'`%"
 }
 
 PROMPT='%{%f%b%k%}$(build_prompt)
